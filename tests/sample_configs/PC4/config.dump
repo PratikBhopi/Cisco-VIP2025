@@ -1,0 +1,14 @@
+hostname PC4
+!
+interface Ethernet0
+ description Connected to SW2 Fa0/1
+ ip address 192.168.30.100 255.255.255.0
+ bandwidth 100000
+ mtu 1400
+ duplex full
+ speed 100
+ no shutdown
+!
+ip default-gateway 192.168.30.1
+!
+end

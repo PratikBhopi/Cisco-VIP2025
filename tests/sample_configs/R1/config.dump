@@ -1,0 +1,62 @@
+!
+! Cisco Router R1 Configuration
+!
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+no aaa new-model
+!
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+!
+ip cef
+no ip domain lookup
+!
+interface GigabitEthernet0/0
+ description Link to R2
+ ip address 192.168.1.1 255.255.255.0
+ bandwidth 1000000
+ mtu 1500
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Link to SW1
+ ip address 10.0.1.1 255.255.255.0
+ bandwidth 1000000
+ mtu 1500
+ no shutdown
+!
+interface Loopback0
+ description Management Interface
+ ip address 1.1.1.1 255.255.255.255
+!
+router ospf 1
+ router-id 1.1.1.1
+ network 192.168.1.0 0.0.0.255 area 0
+ network 10.0.1.0 0.0.0.255 area 0
+ network 1.1.1.1 0.0.0.0 area 0
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+end

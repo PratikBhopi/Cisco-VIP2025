@@ -1,0 +1,60 @@
+!
+! Cisco Router R3 Configuration
+!
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R3
+!
+boot-start-marker
+boot-end-marker
+!
+no aaa new-model
+!
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+!
+ip cef
+no ip domain lookup
+!
+interface GigabitEthernet0/0
+ description Link to R2
+ ip address 192.168.2.2 255.255.255.0
+ bandwidth 1000000
+ mtu 1500
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description WAN Link
+ ip address 203.0.113.1 255.255.255.252
+ bandwidth 1000
+ mtu 1500
+ no shutdown
+!
+interface Loopback0
+ description Management Interface
+ ip address 3.3.3.3 255.255.255.255
+!
+! No OSPF configured - missing routing protocol
+!
+ip route 0.0.0.0 0.0.0.0 203.0.113.2
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+end

@@ -1,0 +1,1456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Topology Visualization</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            height: 80vh;
+        }
+        
+        .topology-panel {
+            flex: 2;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .info-panel {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        #topology {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .device-list {
+            margin-top: 20px;
+        }
+        
+        .device-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .device-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .device-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .device-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .device-type.router {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .device-type.switch {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .device-type.pc {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .device-type.firewall {
+            background: #f44336;
+            color: white;
+        }
+        
+        .device-interfaces {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .interface-count {
+            background: #e0e0e0;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        
+        .subnet-list {
+            margin-top: 20px;
+        }
+        
+        .subnet-item {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .subnet-name {
+            font-weight: bold;
+            color: #e65100;
+        }
+        
+        .subnet-devices {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .control-group label {
+            font-weight: bold;
+            min-width: 100px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+        }
+        
+        .legend {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .legend h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Network Topology Visualization</h1>
+        <p>Interactive network diagram with 10 devices and 19 connections</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>View:</label>
+            <button onclick="fitNetwork()">Fit to Screen</button>
+            <button onclick="resetZoom()">Reset Zoom</button>
+            <button onclick="exportImage()">Export PNG</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="topology-panel">
+            <div id="topology"></div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>Network Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Total Devices</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">19</div>
+                    <div class="stat-label">Network Links</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Subnets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Device Types</div>
+                </div>
+            </div>
+            
+            <h3>Network Devices</h3>
+            <div class="device-list" id="deviceList">
+                
+                <div class="device-item" onclick="focusDevice('PC1')">
+                    <div class="device-name">PC1</div>
+                    <span class="device-type pc">pc</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">1 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('PC2')">
+                    <div class="device-name">PC2</div>
+                    <span class="device-type pc">pc</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">1 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('PC3')">
+                    <div class="device-name">PC3</div>
+                    <span class="device-type pc">pc</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">1 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('PC4')">
+                    <div class="device-name">PC4</div>
+                    <span class="device-type pc">pc</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">1 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('PC5')">
+                    <div class="device-name">PC5</div>
+                    <span class="device-type pc">pc</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">1 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('R1')">
+                    <div class="device-name">R1</div>
+                    <span class="device-type router">router</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">3 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('R2')">
+                    <div class="device-name">R2</div>
+                    <span class="device-type router">router</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">4 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('R3')">
+                    <div class="device-name">R3</div>
+                    <span class="device-type router">router</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">3 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('SW1')">
+                    <div class="device-name">SW1</div>
+                    <span class="device-type switch">switch</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">5 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+                <div class="device-item" onclick="focusDevice('SW2')">
+                    <div class="device-name">SW2</div>
+                    <span class="device-type switch">switch</span>
+                    <div class="device-interfaces">
+                        <span class="interface-count">5 interfaces</span>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
+            <h3>Network Subnets</h3>
+            <div class="subnet-list">
+                
+            <div class="subnet-item">
+                <div class="subnet-name">192.168.10.0/24</div>
+                <div class="subnet-devices">Devices: PC1, PC2, PC3</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">192.168.30.0/24</div>
+                <div class="subnet-devices">Devices: PC4, PC5</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">192.168.1.0/24</div>
+                <div class="subnet-devices">Devices: R1, R2</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">10.0.1.0/24</div>
+                <div class="subnet-devices">Devices: R1</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">1.1.1.1/32</div>
+                <div class="subnet-devices">Devices: R1</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">192.168.2.0/24</div>
+                <div class="subnet-devices">Devices: R2, R3</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">10.0.2.0/24</div>
+                <div class="subnet-devices">Devices: R2</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">2.2.2.2/32</div>
+                <div class="subnet-devices">Devices: R2</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">203.0.113.0/30</div>
+                <div class="subnet-devices">Devices: R3</div>
+            </div>
+            
+            <div class="subnet-item">
+                <div class="subnet-name">3.3.3.3/32</div>
+                <div class="subnet-devices">Devices: R3</div>
+            </div>
+            
+            </div>
+            
+            <div class="legend">
+                <h3>Device Types</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff9800;"></div>
+                    <span>Router</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4caf50;"></div>
+                    <span>Switch</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #2196f3;"></div>
+                    <span>PC/Host</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f44336;"></div>
+                    <span>Firewall</span>
+                </div>
+                
+                <h3 style="margin-top: 20px;">Connection Types</h3>
+                <div class="legend-item">
+                    <div style="width: 30px; height: 4px; background: #ff6b35; margin-right: 10px; border-radius: 2px;"></div>
+                    <span>Core Links (Router-Router)</span>
+                </div>
+                <div class="legend-item">
+                    <div style="width: 30px; height: 3px; background: #4ecdc4; margin-right: 10px; border-radius: 2px;"></div>
+                    <span>Distribution (Router-Switch)</span>
+                </div>
+                <div class="legend-item">
+                    <div style="width: 30px; height: 2px; background: #45b7d1; margin-right: 10px; border-radius: 2px;"></div>
+                    <span>Access Links (Switch-PC)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Network data
+        const nodes = new vis.DataSet([
+  {
+    "id": "PC1",
+    "label": "PC1",
+    "group": "pc",
+    "color": {
+      "background": "#2196f3",
+      "border": "#1976d2"
+    },
+    "shape": "dot",
+    "size": 25,
+    "level": 2,
+    "title": "<b>PC1</b><br>Type: pc<br>Hostname: PC1<br>Interfaces: 1<br>IPs: 192.168.10.100",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "PC2",
+    "label": "PC2",
+    "group": "pc",
+    "color": {
+      "background": "#2196f3",
+      "border": "#1976d2"
+    },
+    "shape": "dot",
+    "size": 25,
+    "level": 2,
+    "title": "<b>PC2</b><br>Type: pc<br>Hostname: PC2<br>Interfaces: 1<br>IPs: 192.168.10.101",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "PC3",
+    "label": "PC3",
+    "group": "pc",
+    "color": {
+      "background": "#2196f3",
+      "border": "#1976d2"
+    },
+    "shape": "dot",
+    "size": 25,
+    "level": 2,
+    "title": "<b>PC3</b><br>Type: pc<br>Hostname: PC3<br>Interfaces: 1<br>IPs: 192.168.10.100",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "PC4",
+    "label": "PC4",
+    "group": "pc",
+    "color": {
+      "background": "#2196f3",
+      "border": "#1976d2"
+    },
+    "shape": "dot",
+    "size": 25,
+    "level": 2,
+    "title": "<b>PC4</b><br>Type: pc<br>Hostname: PC4<br>Interfaces: 1<br>IPs: 192.168.30.100",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "PC5",
+    "label": "PC5",
+    "group": "pc",
+    "color": {
+      "background": "#2196f3",
+      "border": "#1976d2"
+    },
+    "shape": "dot",
+    "size": 25,
+    "level": 2,
+    "title": "<b>PC5</b><br>Type: pc<br>Hostname: PC5<br>Interfaces: 1<br>IPs: 192.168.30.100",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "R1",
+    "label": "R1",
+    "group": "router",
+    "color": {
+      "background": "#ff9800",
+      "border": "#f57c00"
+    },
+    "shape": "box",
+    "size": 40,
+    "level": 0,
+    "title": "<b>R1</b><br>Type: router<br>Hostname: R1<br>Interfaces: 3<br>IPs: 192.168.1.1, 10.0.1.1, 1.1.1.1",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "R2",
+    "label": "R2",
+    "group": "router",
+    "color": {
+      "background": "#ff9800",
+      "border": "#f57c00"
+    },
+    "shape": "box",
+    "size": 40,
+    "level": 0,
+    "title": "<b>R2</b><br>Type: router<br>Hostname: R2<br>Interfaces: 4<br>IPs: 192.168.1.2, 192.168.2.1, 10.0.2.1 (+1 more)",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "R3",
+    "label": "R3",
+    "group": "router",
+    "color": {
+      "background": "#ff9800",
+      "border": "#f57c00"
+    },
+    "shape": "box",
+    "size": 40,
+    "level": 0,
+    "title": "<b>R3</b><br>Type: router<br>Hostname: R3<br>Interfaces: 3<br>IPs: 192.168.2.2, 203.0.113.1, 3.3.3.3",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "SW1",
+    "label": "SW1",
+    "group": "switch",
+    "color": {
+      "background": "#4caf50",
+      "border": "#388e3c"
+    },
+    "shape": "ellipse",
+    "size": 35,
+    "level": 1,
+    "title": "<b>SW1</b><br>Type: switch<br>Hostname: SW1<br>Interfaces: 5<br>",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  },
+  {
+    "id": "SW2",
+    "label": "SW2",
+    "group": "switch",
+    "color": {
+      "background": "#4caf50",
+      "border": "#388e3c"
+    },
+    "shape": "ellipse",
+    "size": 35,
+    "level": 1,
+    "title": "<b>SW2</b><br>Type: switch<br>Hostname: SW2<br>Interfaces: 5<br>",
+    "font": {
+      "size": 14,
+      "color": "#333333",
+      "face": "Arial Bold"
+    }
+  }
+]);
+        const edges = new vis.DataSet([
+  {
+    "from": "R1",
+    "to": "R2",
+    "width": 4,
+    "color": {
+      "color": "#ff6b35"
+    },
+    "title": "Connection: R1 \u2194 R2<br>Type: Router to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "R2",
+    "to": "R3",
+    "width": 4,
+    "color": {
+      "color": "#ff6b35"
+    },
+    "title": "Connection: R2 \u2194 R3<br>Type: Router to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW1",
+    "to": "R1",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW1 \u2194 R1<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW1",
+    "to": "R2",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW1 \u2194 R2<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW1",
+    "to": "R3",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW1 \u2194 R3<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW2",
+    "to": "R1",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW2 \u2194 R1<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW2",
+    "to": "R2",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW2 \u2194 R2<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW2",
+    "to": "R3",
+    "width": 3,
+    "color": {
+      "color": "#4ecdc4"
+    },
+    "title": "Connection: SW2 \u2194 R3<br>Type: Switch to Router",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC1",
+    "to": "SW1",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC1 \u2194 SW1<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC1",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC1 \u2194 SW2<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC2",
+    "to": "SW1",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC2 \u2194 SW1<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC2",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC2 \u2194 SW2<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC3",
+    "to": "SW1",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC3 \u2194 SW1<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC3",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC3 \u2194 SW2<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC4",
+    "to": "SW1",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC4 \u2194 SW1<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC4",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC4 \u2194 SW2<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC5",
+    "to": "SW1",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC5 \u2194 SW1<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "PC5",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#45b7d1"
+    },
+    "title": "Connection: PC5 \u2194 SW2<br>Type: Pc to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    }
+  },
+  {
+    "from": "SW1",
+    "to": "SW2",
+    "width": 2,
+    "color": {
+      "color": "#96ceb4"
+    },
+    "title": "Connection: SW1 \u2194 SW2<br>Type: Switch to Switch",
+    "smooth": {
+      "type": "straightCross",
+      "roundness": 0.1
+    },
+    "dashes": [
+      5,
+      5
+    ]
+  }
+]);
+        const deviceDetails = {
+  "PC1": {
+    "name": "PC1",
+    "device_type": "pc",
+    "hostname": "PC1",
+    "interfaces": [
+      {
+        "name": "Et0",
+        "ip_address": "192.168.10.100",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "10000Kbps",
+        "mtu": 1400,
+        "description": "Connected to SW1 Fa0/1",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "PC2": {
+    "name": "PC2",
+    "device_type": "pc",
+    "hostname": "PC2",
+    "interfaces": [
+      {
+        "name": "Et0",
+        "ip_address": "192.168.10.101",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "100000Kbps",
+        "mtu": 1500,
+        "description": "Connected to SW1 Fa0/2",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "PC3": {
+    "name": "PC3",
+    "device_type": "pc",
+    "hostname": "PC3",
+    "interfaces": [
+      {
+        "name": "Et0",
+        "ip_address": "192.168.10.100",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "100000Kbps",
+        "mtu": 1600,
+        "description": "Connected to SW1 Fa0/3",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "PC4": {
+    "name": "PC4",
+    "device_type": "pc",
+    "hostname": "PC4",
+    "interfaces": [
+      {
+        "name": "Et0",
+        "ip_address": "192.168.30.100",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "100000Kbps",
+        "mtu": 1400,
+        "description": "Connected to SW2 Fa0/1",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "PC5": {
+    "name": "PC5",
+    "device_type": "pc",
+    "hostname": "PC5",
+    "interfaces": [
+      {
+        "name": "Et0",
+        "ip_address": "192.168.30.100",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "10000Kbps",
+        "mtu": 1500,
+        "description": "Connected to SW2 Fa0/2",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "R1": {
+    "name": "R1",
+    "device_type": "router",
+    "hostname": "R1",
+    "interfaces": [
+      {
+        "name": "Gi0/0",
+        "ip_address": "192.168.1.1",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Link to R2",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/1",
+        "ip_address": "10.0.1.1",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Link to SW1",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Lo0",
+        "ip_address": "1.1.1.1",
+        "subnet_mask": "255.255.255.255",
+        "bandwidth": "10000Kbps",
+        "mtu": 1500,
+        "description": "Management Interface",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": [
+      {
+        "protocol": "ospf",
+        "process_id": "1",
+        "networks": [
+          "192.168.1.0 0.0.0.255",
+          "10.0.1.0 0.0.0.255",
+          "1.1.1.1 0.0.0.0"
+        ],
+        "neighbors": [],
+        "area": null
+      }
+    ]
+  },
+  "R2": {
+    "name": "R2",
+    "device_type": "router",
+    "hostname": "R2",
+    "interfaces": [
+      {
+        "name": "Gi0/0",
+        "ip_address": "192.168.1.2",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Link to R1",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/1",
+        "ip_address": "192.168.2.1",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Link to R3",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Fa0/0",
+        "ip_address": "10.0.2.1",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "10000Kbps",
+        "mtu": 1400,
+        "description": "Link to SW2",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Lo0",
+        "ip_address": "2.2.2.2",
+        "subnet_mask": "255.255.255.255",
+        "bandwidth": "10000Kbps",
+        "mtu": 1500,
+        "description": "Management Interface",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": [
+      {
+        "protocol": "ospf",
+        "process_id": "1",
+        "networks": [
+          "192.168.1.0 0.0.0.255",
+          "192.168.2.0 0.0.0.255",
+          "10.0.2.0 0.0.0.255",
+          "2.2.2.2 0.0.0.0"
+        ],
+        "neighbors": [],
+        "area": null
+      }
+    ]
+  },
+  "R3": {
+    "name": "R3",
+    "device_type": "router",
+    "hostname": "R3",
+    "interfaces": [
+      {
+        "name": "Gi0/0",
+        "ip_address": "192.168.2.2",
+        "subnet_mask": "255.255.255.0",
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Link to R2",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/1",
+        "ip_address": "203.0.113.1",
+        "subnet_mask": "255.255.255.252",
+        "bandwidth": "1000Kbps",
+        "mtu": 1500,
+        "description": "WAN Link",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Lo0",
+        "ip_address": "3.3.3.3",
+        "subnet_mask": "255.255.255.255",
+        "bandwidth": "10000Kbps",
+        "mtu": 1500,
+        "description": "Management Interface",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "SW1": {
+    "name": "SW1",
+    "device_type": "switch",
+    "hostname": "SW1",
+    "interfaces": [
+      {
+        "name": "Fa0/1",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "10000Kbps",
+        "mtu": 1400,
+        "description": "Connected to PC1",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Fa0/2",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1500,
+        "description": "Connected to PC2",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Fa0/3",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1600,
+        "description": "Connected to PC3",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/1",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1500,
+        "description": "Trunk to SW2",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/2",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Uplink to Router",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  },
+  "SW2": {
+    "name": "SW2",
+    "device_type": "switch",
+    "hostname": "SW2",
+    "interfaces": [
+      {
+        "name": "Fa0/1",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1400,
+        "description": "Connected to PC4",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Fa0/2",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1500,
+        "description": "Connected to PC5",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Fa0/3",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "100000Kbps",
+        "mtu": 1500,
+        "description": "Unused Port",
+        "vlan": 10,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/1",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Trunk to SW1",
+        "vlan": null,
+        "enabled": true
+      },
+      {
+        "name": "Gi0/2",
+        "ip_address": null,
+        "subnet_mask": null,
+        "bandwidth": "1000000Kbps",
+        "mtu": 1500,
+        "description": "Uplink to Router",
+        "vlan": null,
+        "enabled": true
+      }
+    ],
+    "vlans": {},
+    "routing_protocols": []
+  }
+};
+        
+        // Network options - Simplified for clarity
+        let options = {
+            layout: {
+                hierarchical: {
+                    enabled: true,
+                    direction: 'UD',
+                    sortMethod: 'directed',
+                    levelSeparation: 150,
+                    nodeSpacing: 200,
+                    treeSpacing: 250,
+                    blockShifting: true,
+                    edgeMinimization: true,
+                    parentCentralization: true
+                }
+            },
+            physics: {
+                enabled: false
+            },
+            nodes: {
+                shape: 'dot',
+                size: 30,
+                font: {
+                    size: 16,
+                    color: '#333333',
+                    face: 'Arial Bold'
+                },
+                borderWidth: 2,
+                shadow: false,
+                chosen: {
+                    node: function(values, id, selected, hovering) {
+                        values.size = 35;
+                        values.borderWidth = 3;
+                    }
+                }
+            },
+            edges: {
+                width: 2,
+                color: {
+                    color: '#666666',
+                    highlight: '#ff4444',
+                    hover: '#ff4444'
+                },
+                smooth: {
+                    enabled: true,
+                    type: 'straightCross',
+                    roundness: 0.1
+                },
+                font: {
+                    size: 0,  // Hide edge labels by default for cleaner look
+                    color: '#666666'
+                },
+                shadow: false,
+                arrows: {
+                    to: {
+                        enabled: false
+                    }
+                }
+            },
+            interaction: {
+                hover: true,
+                selectConnectedEdges: true,
+                tooltipDelay: 200,
+                hideEdgesOnDrag: true,
+                hideNodesOnDrag: false
+            }
+        };
+        
+        // Initialize network
+        const container = document.getElementById('topology');
+        const data = { nodes: nodes, edges: edges };
+        const network = new vis.Network(container, data, options);
+        
+        // Event handlers
+        network.on('click', function(params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                showDeviceDetails(nodeId);
+            }
+        });
+        
+        network.on('hoverNode', function(params) {
+            const nodeId = params.node;
+            highlightConnectedNodes(nodeId);
+        });
+        
+        network.on('blurNode', function(params) {
+            resetHighlight();
+        });
+        
+        // Functions
+        function showDeviceDetails(nodeId) {
+            const device = deviceDetails[nodeId];
+            if (device) {
+                alert(`Device: ${device.name}\n` +
+                      `Type: ${device.device_type}\n` +
+                      `Hostname: ${device.hostname}\n` +
+                      `Interfaces: ${device.interfaces.length}\n` +
+                      `VLANs: ${Object.keys(device.vlans).length}`);
+            }
+        }
+        
+        function highlightConnectedNodes(nodeId) {
+            const connectedNodes = network.getConnectedNodes(nodeId);
+            const connectedEdges = network.getConnectedEdges(nodeId);
+            
+            // Highlight connected nodes
+            const updateNodes = nodes.map(node => {
+                if (node.id === nodeId || connectedNodes.includes(node.id)) {
+                    return { ...node, color: { background: node.color.background, border: '#ff4444' } };
+                } else {
+                    return { ...node, color: { background: node.color.background, border: '#cccccc' } };
+                }
+            });
+            
+            nodes.update(updateNodes);
+        }
+        
+        function resetHighlight() {
+            const updateNodes = nodes.map(node => {
+                return { ...node, color: { background: node.color.background, border: getDeviceColor(node.group).border } };
+            });
+            nodes.update(updateNodes);
+        }
+        
+        function focusDevice(deviceId) {
+            network.focus(deviceId, {
+                scale: 1.5,
+                animation: {
+                    duration: 1000,
+                    easingFunction: 'easeInOutQuad'
+                }
+            });
+            
+            // Highlight the device
+            highlightConnectedNodes(deviceId);
+            setTimeout(() => resetHighlight(), 3000);
+        }
+        
+        function fitNetwork() {
+            network.fit();
+        }
+        
+        function resetZoom() {
+            network.moveTo({ scale: 1.0 });
+        }
+        
+        function exportImage() {
+            const canvas = network.canvas.frame.canvas;
+            const link = document.createElement('a');
+            link.download = 'network_topology.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function getDeviceColor(deviceType) {
+            const colors = {
+                'router': { background: '#ff9800', border: '#f57c00' },
+                'switch': { background: '#4caf50', border: '#388e3c' },
+                'pc': { background: '#2196f3', border: '#1976d2' },
+                'firewall': { background: '#f44336', border: '#d32f2f' }
+            };
+            return colors[deviceType] || { background: '#9e9e9e', border: '#757575' };
+        }
+        
+        // Initialize with fit view
+        setTimeout(() => {
+            network.fit();
+        }, 1000);
+    </script>
+</body>
+</html>
+        

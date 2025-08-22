@@ -1,0 +1,72 @@
+# Network Topology Analyzer Configuration
+
+# Simulation settings
+simulation:
+  thread_pool_size: 10
+  ipc_timeout: 5000 # milliseconds
+  statistics_interval: 1000 # milliseconds
+  max_simulation_time: 300 # seconds
+  enable_real_time: false
+
+# Analysis settings
+analysis:
+  bandwidth_threshold: 0.8 # 80% utilization threshold
+  mtu_check_enabled: true
+  loop_detection: true
+  duplicate_ip_check: true
+  vlan_validation: true
+  gateway_validation: true
+  routing_protocol_analysis: true
+
+# Logging configuration
+logging:
+  level: INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: logs/network_analyzer.log
+  console_output: true
+  max_file_size: 10MB
+  backup_count: 5
+
+# Network device defaults
+device_defaults:
+  router:
+    default_bandwidth: "1000Mbps"
+    default_mtu: 1500
+    ospf_hello_interval: 10
+    ospf_dead_interval: 40
+  switch:
+    default_bandwidth: "1000Mbps"
+    default_mtu: 1500
+    stp_enabled: true
+
+# Traffic analysis
+traffic:
+  default_utilization: 0.3 # 30% default utilization
+  peak_multiplier: 2.5 # Peak traffic is 2.5x normal
+  application_profiles:
+    web:
+      bandwidth: "100Mbps"
+      priority: normal
+    video:
+      bandwidth: "500Mbps"
+      priority: high
+    voip:
+      bandwidth: "64Kbps"
+      priority: critical
+    data:
+      bandwidth: "200Mbps"
+      priority: normal
+
+# Output settings
+output:
+  topology_format: json # json, yaml, xml
+  report_format: html # html, pdf, txt
+  include_statistics: true
+  include_recommendations: true
+  visualization_enabled: true
+
+# Validation rules
+validation:
+  max_hops: 15
+  min_bandwidth: "10Mbps"
+  required_redundancy: true
+  check_single_points_of_failure: true

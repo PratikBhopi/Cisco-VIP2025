@@ -1,0 +1,92 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Network Analysis Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+                .section { margin: 20px 0; }
+                .issue { background-color: #ffe6e6; padding: 10px; margin: 5px 0; border-radius: 3px; }
+                .recommendation { background-color: #e6f3ff; padding: 10px; margin: 5px 0; border-radius: 3px; }
+                .stats { background-color: #f0f8f0; padding: 15px; border-radius: 5px; }
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Network Analysis Report</h1>
+                <p>Generated on: 2025-08-22 16:24:58</p>
+            </div>
+            
+            <div class="section">
+                <h2>Network Statistics</h2>
+                <div class="stats">
+                    <p><strong>Total Devices:</strong> 10</p>
+                    <p><strong>Total Links:</strong> 19</p>
+                    <p><strong>Total Subnets:</strong> 10</p>
+                    <p><strong>Average Utilization:</strong> 36.4%</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Configuration Issues</h2>
+                
+            <div class="issue issue-high">
+                <strong>Duplicate Ip:</strong>
+                Duplicate IP address 192.168.10.100
+                <br><em>Recommendation: Assign unique IP addresses to avoid conflicts</em>
+            </div>
+            
+            <div class="issue issue-high">
+                <strong>Duplicate Ip:</strong>
+                Duplicate IP address 192.168.30.100
+                <br><em>Recommendation: Assign unique IP addresses to avoid conflicts</em>
+            </div>
+            
+            <div class="issue issue-medium">
+                <strong>Mtu Mismatch:</strong>
+                MTU mismatch between SW2 (1500) and R2 (1400)
+                <br><em>Recommendation: Configure matching MTU sizes on both ends of the link</em>
+            </div>
+            
+            <div class="issue issue-medium">
+                <strong>Mtu Mismatch:</strong>
+                MTU mismatch between PC2 (1500) and SW2 (1400)
+                <br><em>Recommendation: Configure matching MTU sizes on both ends of the link</em>
+            </div>
+            
+            <div class="issue issue-medium">
+                <strong>Mtu Mismatch:</strong>
+                MTU mismatch between PC3 (1600) and SW2 (1400)
+                <br><em>Recommendation: Configure matching MTU sizes on both ends of the link</em>
+            </div>
+            
+            <div class="issue issue-medium">
+                <strong>Mtu Mismatch:</strong>
+                MTU mismatch between PC5 (1500) and SW1 (1400)
+                <br><em>Recommendation: Configure matching MTU sizes on both ends of the link</em>
+            </div>
+            
+            <div class="issue issue-medium">
+                <strong>Missing Default Route:</strong>
+                Router R3 may be missing default route configuration
+                <br><em>Recommendation: Configure default route or routing protocol</em>
+            </div>
+            
+            </div>
+            
+            <div class="section">
+                <h2>Optimization Recommendations</h2>
+                <div class="recommendation">Consider implementing VLANs for better network segmentation</div>
+            </div>
+            
+            <div class="section">
+                <h2>Bandwidth Analysis</h2>
+                <p><strong>Average Utilization:</strong> 36.4%</p>
+            </div>
+        </body>
+        </html>
+        

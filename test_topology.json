@@ -1,0 +1,599 @@
+{
+  "devices": [
+    {
+      "name": "PC1",
+      "device_type": "pc",
+      "hostname": "PC1",
+      "interfaces": [
+        {
+          "name": "Et0",
+          "ip_address": "192.168.10.100",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "10000Kbps",
+          "mtu": 1400,
+          "description": "Connected to SW1 Fa0/1",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\PC1\\config.dump"
+    },
+    {
+      "name": "PC2",
+      "device_type": "pc",
+      "hostname": "PC2",
+      "interfaces": [
+        {
+          "name": "Et0",
+          "ip_address": "192.168.10.101",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "100000Kbps",
+          "mtu": 1500,
+          "description": "Connected to SW1 Fa0/2",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\PC2\\config.dump"
+    },
+    {
+      "name": "PC3",
+      "device_type": "pc",
+      "hostname": "PC3",
+      "interfaces": [
+        {
+          "name": "Et0",
+          "ip_address": "192.168.10.100",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "100000Kbps",
+          "mtu": 1600,
+          "description": "Connected to SW1 Fa0/3",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\PC3\\config.dump"
+    },
+    {
+      "name": "PC4",
+      "device_type": "pc",
+      "hostname": "PC4",
+      "interfaces": [
+        {
+          "name": "Et0",
+          "ip_address": "192.168.30.100",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "100000Kbps",
+          "mtu": 1400,
+          "description": "Connected to SW2 Fa0/1",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\PC4\\config.dump"
+    },
+    {
+      "name": "PC5",
+      "device_type": "pc",
+      "hostname": "PC5",
+      "interfaces": [
+        {
+          "name": "Et0",
+          "ip_address": "192.168.30.100",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "10000Kbps",
+          "mtu": 1500,
+          "description": "Connected to SW2 Fa0/2",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\PC5\\config.dump"
+    },
+    {
+      "name": "R1",
+      "device_type": "router",
+      "hostname": "R1",
+      "interfaces": [
+        {
+          "name": "Gi0/0",
+          "ip_address": "192.168.1.1",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Link to R2",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/1",
+          "ip_address": "10.0.1.1",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Link to SW1",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Lo0",
+          "ip_address": "1.1.1.1",
+          "subnet_mask": "255.255.255.255",
+          "bandwidth": "10000Kbps",
+          "mtu": 1500,
+          "description": "Management Interface",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [
+        {
+          "protocol": "ospf",
+          "process_id": "1",
+          "networks": [
+            "192.168.1.0 0.0.0.255",
+            "10.0.1.0 0.0.0.255",
+            "1.1.1.1 0.0.0.0"
+          ],
+          "neighbors": [],
+          "area": null
+        }
+      ],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\R1\\config.dump"
+    },
+    {
+      "name": "R2",
+      "device_type": "router",
+      "hostname": "R2",
+      "interfaces": [
+        {
+          "name": "Gi0/0",
+          "ip_address": "192.168.1.2",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Link to R1",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/1",
+          "ip_address": "192.168.2.1",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Link to R3",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Fa0/0",
+          "ip_address": "10.0.2.1",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "10000Kbps",
+          "mtu": 1400,
+          "description": "Link to SW2",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Lo0",
+          "ip_address": "2.2.2.2",
+          "subnet_mask": "255.255.255.255",
+          "bandwidth": "10000Kbps",
+          "mtu": 1500,
+          "description": "Management Interface",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [
+        {
+          "protocol": "ospf",
+          "process_id": "1",
+          "networks": [
+            "192.168.1.0 0.0.0.255",
+            "192.168.2.0 0.0.0.255",
+            "10.0.2.0 0.0.0.255",
+            "2.2.2.2 0.0.0.0"
+          ],
+          "neighbors": [],
+          "area": null
+        }
+      ],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\R2\\config.dump"
+    },
+    {
+      "name": "R3",
+      "device_type": "router",
+      "hostname": "R3",
+      "interfaces": [
+        {
+          "name": "Gi0/0",
+          "ip_address": "192.168.2.2",
+          "subnet_mask": "255.255.255.0",
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Link to R2",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/1",
+          "ip_address": "203.0.113.1",
+          "subnet_mask": "255.255.255.252",
+          "bandwidth": "1000Kbps",
+          "mtu": 1500,
+          "description": "WAN Link",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Lo0",
+          "ip_address": "3.3.3.3",
+          "subnet_mask": "255.255.255.255",
+          "bandwidth": "10000Kbps",
+          "mtu": 1500,
+          "description": "Management Interface",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\R3\\config.dump"
+    },
+    {
+      "name": "SW1",
+      "device_type": "switch",
+      "hostname": "SW1",
+      "interfaces": [
+        {
+          "name": "Fa0/1",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "10000Kbps",
+          "mtu": 1400,
+          "description": "Connected to PC1",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Fa0/2",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1500,
+          "description": "Connected to PC2",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Fa0/3",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1600,
+          "description": "Connected to PC3",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/1",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1500,
+          "description": "Trunk to SW2",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/2",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Uplink to Router",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\SW1\\config.dump"
+    },
+    {
+      "name": "SW2",
+      "device_type": "switch",
+      "hostname": "SW2",
+      "interfaces": [
+        {
+          "name": "Fa0/1",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1400,
+          "description": "Connected to PC4",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Fa0/2",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1500,
+          "description": "Connected to PC5",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Fa0/3",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "100000Kbps",
+          "mtu": 1500,
+          "description": "Unused Port",
+          "vlan": 10,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/1",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Trunk to SW1",
+          "vlan": null,
+          "enabled": true
+        },
+        {
+          "name": "Gi0/2",
+          "ip_address": null,
+          "subnet_mask": null,
+          "bandwidth": "1000000Kbps",
+          "mtu": 1500,
+          "description": "Uplink to Router",
+          "vlan": null,
+          "enabled": true
+        }
+      ],
+      "routing_protocols": [],
+      "vlans": {},
+      "config_file": "tests\\sample_configs\\SW2\\config.dump"
+    }
+  ],
+  "links": [
+    {
+      "source_device": "R1",
+      "target_device": "R2",
+      "source_interface": "Gi0/0",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "R2",
+      "target_device": "R3",
+      "source_interface": "Gi0/1",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW1",
+      "target_device": "R1",
+      "source_interface": "Gi0/2",
+      "target_interface": "Gi0/1",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW1",
+      "target_device": "R2",
+      "source_interface": "Gi0/2",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW1",
+      "target_device": "R3",
+      "source_interface": "Gi0/2",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW2",
+      "target_device": "R1",
+      "source_interface": "Gi0/2",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW2",
+      "target_device": "R2",
+      "source_interface": "Gi0/2",
+      "target_interface": "Fa0/0",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW2",
+      "target_device": "R3",
+      "source_interface": "Gi0/2",
+      "target_interface": "Gi0/0",
+      "bandwidth": "1Gbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC1",
+      "target_device": "SW1",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC1",
+      "target_device": "SW2",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC2",
+      "target_device": "SW1",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/2",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC2",
+      "target_device": "SW2",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC3",
+      "target_device": "SW1",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/3",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC3",
+      "target_device": "SW2",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC4",
+      "target_device": "SW1",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC4",
+      "target_device": "SW2",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC5",
+      "target_device": "SW1",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/1",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "PC5",
+      "target_device": "SW2",
+      "source_interface": "Et0",
+      "target_interface": "Fa0/2",
+      "bandwidth": "10Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    },
+    {
+      "source_device": "SW1",
+      "target_device": "SW2",
+      "source_interface": "Gi0/1",
+      "target_interface": "Gi0/1",
+      "bandwidth": "100Mbps",
+      "utilization": 0.0,
+      "link_type": "ethernet"
+    }
+  ],
+  "subnets": {
+    "192.168.10.0/24": [
+      "PC1",
+      "PC2",
+      "PC3"
+    ],
+    "192.168.30.0/24": [
+      "PC4",
+      "PC5"
+    ],
+    "192.168.1.0/24": [
+      "R1",
+      "R2"
+    ],
+    "10.0.1.0/24": [
+      "R1"
+    ],
+    "1.1.1.1/32": [
+      "R1"
+    ],
+    "192.168.2.0/24": [
+      "R2",
+      "R3"
+    ],
+    "10.0.2.0/24": [
+      "R2"
+    ],
+    "2.2.2.2/32": [
+      "R2"
+    ],
+    "203.0.113.0/30": [
+      "R3"
+    ],
+    "3.3.3.3/32": [
+      "R3"
+    ]
+  },
+  "statistics": {
+    "total_devices": 10,
+    "total_links": 19,
+    "total_subnets": 10,
+    "device_types": {
+      "pc": 5,
+      "router": 3,
+      "switch": 2
+    }
+  }
+}
